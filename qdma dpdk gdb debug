@@ -1,0 +1,29 @@
+QDMA dpdk gdb 调试
+
+1 设置Qdma pmd net driver 的编译选项为 -o0 不优化， -g 允许debug
+export EXTRA_CFLAGS="-O0 -g"  
+
+2 再gdb下允许test-pmd (带参数)
+#>gdb -args ./testpmd -cf -n4 -w 3b:01.0,desc_prefetch=1,cmpt_desc_len=16 --log-level pmd.net.qdma.init:8 -- -i --nb-cores=1 --rxq=1 --txq=1 --rxd=2048 --txd=2048 --burst=64 --mbuf-size=4224 --txpkts=64 --eth-peer=0,00:00:00:00:00:00
+
+3 设置断点
+例如断点到某个函数
+Gdb> b qdma_vf_dev_configure
+
+4 查看源代码
+Gdb>l
+或者
+Gdb> layout src
+
+5 常用命令
+gdb) l ：（字母l）从第一行开始列出源码
+(gdb) break n :在第n行处设置断点
+(gdb) break func：在函数func()的入口处设置断点
+(gdb) info break： 查看断点信息
+(gdb) r：运行程序
+(gdb) n：单步执行
+(gdb) c：继续运行
+(gdb) p 变量 ：打印变量的值
+(gdb) bt：查看函数堆栈
+
+#>b qdma_set_qmax
